@@ -3,6 +3,8 @@ import string
 import subprocess
 import sys
 
+from hr.helpers import user_names
+
 def add(user_info):
     print("Adding user '%s'" % user_info['name'])
     try:
@@ -45,8 +47,7 @@ def update(user_info):
         print("Failed to update user '%s'" % user_info['name'])
         sys.exit(1)
 
-def sync(user_info):
-    existing_user_names = (existing_user_names or _user_names())
+def sync(users, existing_user_names=user_names()):
     user_names = [user['name'] for user in users]
     for user in users:
         if user['name'] not in existing_user_names:
@@ -59,8 +60,3 @@ def sync(user_info):
 
 def _groups_str(user_info):
     return string.join(user_info['groups'] or [], ',')
-
-def _user_names():
-    return [user.pw_name for user in pwd.getpwall()
-            if user.pw_uid >= 1000 and 'home' in user.pw_dir]
-
